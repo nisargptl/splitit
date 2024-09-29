@@ -95,7 +95,7 @@ app.delete('/api/user/:id', async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.status(204).send();
+        res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -158,7 +158,100 @@ app.delete('/api/group/:id', async (req, res) => {
         if (!deletedGroup) {
             return res.status(404).json({ message: 'Group not found' });
         }
-        res.status(204).send();
+        res.status(200).json({ message: 'Group deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/transaction/:groupId', async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        const { txn_id, txn_name, payer_id, name, payees, amount, is_recurring } = req.body;
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        // Create new transaction
+        const newTransaction = new Object({
+            txn_id,
+            txn_name,
+            payer_id,
+            name,
+            payees,
+            amount,
+            is_recurring: is_recurring || false,
+            date: new Date()
+        });
+
+        // Append the transaction to the database
+        group.transactions.push(newTransaction);
+        await group.save();
+        res.status(201).json({ message: 'Transaction added successfully', Transaction: newTransaction });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/transaction/:groupId/:id', async (req, res) => {
+    try {
+        const txnId = req.params.id;
+        const groupId = req.params.groupId;
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        const transaction = group.transactions.find(transaction => transaction.txn_id === txnId);
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        res.status(200).json(transaction);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/transaction/:groupId/:id', async (req, res) => {
+    try {
+        const txnId = req.params.id;
+        const groupId = req.params.groupId;
+        const updatedTransactionData = req.body;
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        const index = group.transactions.findIndex(transaction => transaction.txn_id === txnId);
+        if (index !== -1) {
+            group.transactions[index] = {
+                ...updatedTransactionData 
+            }
+            await group.save();
+        } else {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        res.status(200).json({ updatedData: req.body});
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/transaction/:groupId/:id', async (req, res) => {
+    try {
+        const txnId = req.params.id;
+        const groupId = req.params.groupId;
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        const index = group.transactions.findIndex(transaction => transaction.txn_id === txnId);
+        if (index !== -1) {
+            group.transactions.splice(index, 1);
+            await group.save();
+        } else {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        res.status(200).json({ message: 'Transaction deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
