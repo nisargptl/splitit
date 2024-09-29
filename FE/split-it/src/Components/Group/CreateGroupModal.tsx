@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Modal, Form, Dropdown, Badge } from "react-bootstrap";
 import { getAllUsers } from "../../api/user/endpoints";
 import { createGroup } from "../../api/group";
+//@ts-ignore
+import { UserContext } from "../../utils/userContext";
 
 interface CreateGroupModalProps {
     setShowCreateGroupModal: (val: boolean) => void;
@@ -17,14 +19,18 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     const [newGroupName, setNewGroupName] = useState("");
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState<any>([]);
+    const userContext: any = useContext(UserContext);
+    const { userId } = userContext;
 
     const handleGroupNameChange = (e: any) => {
         setNewGroupName(e.target.value);
     };
 
     useEffect(() => {
-        getAllUsers().then((data:any) => setUsers(data));
-    }, []);
+        if (userId) {
+            getAllUsers(userId).then((data: any) => setUsers(data));
+        }
+    }, [userId]);
 
     const handleClose = () => setShowCreateGroupModal(false);
 
