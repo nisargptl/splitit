@@ -1,0 +1,36 @@
+[{
+            "payer_id": "1",
+            "payees": [
+                {
+                    "user_id": "1",
+                    "amount": 200
+                },
+                {
+                    "user_id": "2",
+                    "amount": 200
+                }
+            ],
+            "amount": 400,
+            "date": "2024-08-01T00:00:00.000Z",
+            "is_recurring": false,
+            "txn_name": "OTT sub",
+            "txn_id": "id1"
+        },
+        {
+            "payer_id": "1",
+            "payees": [
+                {
+                    "user_id": "3",
+                    "amount": 200
+                },
+                {
+                    "user_id": "1",
+                    "amount": 200
+                }
+            ],
+            "amount": 400,
+            "date": "2024-09-01T00:00:00.000Z",
+            "is_recurring": false,
+            "txn_name": "Netflix Subscription",
+            "txn_id": "id2"
+}]
