@@ -5,8 +5,10 @@ import ExpenseModal from "./ExpenseModal";
 import UploadBillModal from "./UploadBillModal";
 import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "react-bootstrap/Spinner";
+import { uploadUser } from "../../api/user/endpoints";
 
 interface GroupDetailsProps {
+
     setIsLoggedIn: (val: boolean) => void;
     isLoggedIn: boolean;
 }
@@ -21,13 +23,19 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
     const { getAccessTokenSilently, isLoading } = useAuth0();
 
     useEffect(() => {
-        console.log(isLoading);
-        if (!isLoading) {
-            getAccessTokenSilently().then((token) => {
+        const fetchData = async () => {
+            console.log(isLoading);
+            if (!isLoading) {
+                const token = await getAccessTokenSilently();
                 localStorage.setItem("token", token);
                 setIsLoggedIn(true);
-            });
-        }
+    
+                // upload user data to db
+                await uploadUser();
+            }
+        };
+    
+        fetchData();
     }, [isLoading]);
 
     const handleAddExpense = () => {
