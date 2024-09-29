@@ -1,0 +1,32 @@
+.app-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+button.add-expense-btn,
+button.upload-bill-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #ff7f50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.modal-body {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+.modal-body::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
