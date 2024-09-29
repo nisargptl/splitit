@@ -4,10 +4,11 @@ import "./styles.css";
 interface ExpenseItemProps {
     expense: {
         date: string;
-        title: string;
+        name: string;
         paid: number;
         lent: number;
         received?: number;
+        paidBy: string;
     };
 }
 
@@ -15,9 +16,11 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
     return (
         <div className="expense-item">
             <div className="expense-date">{expense.date}</div>
-            <div className="expense-title">{expense.title}</div>
+            <div className="expense-title">{expense.name}</div>
             <div className="expense-paid">
-                <p style={{ margin: 5, color: "gray", fontSize: 12 }}>You paid:</p>
+                <p style={{ margin: 5, color: "gray", fontSize: 12 }}>
+                    {expense.paidBy} paid:
+                </p>
                 <p
                     style={{
                         margin: 5,
@@ -33,7 +36,11 @@ const ExpenseItem: React.FC<ExpenseItemProps> = ({ expense }) => {
                 </p>
             </div>
             <div className="expense-lent">
-                <p style={{ margin: 5, color: "gray",  fontSize: 12 }}>You lent:</p>
+                <p style={{ margin: 5, color: "gray", fontSize: 12 }}>
+                    {expense.paidBy === "You"
+                        ? "You lent: "
+                        : `${expense.paidBy} lent you: `}
+                </p>
                 <p
                     style={{
                         margin: 5,

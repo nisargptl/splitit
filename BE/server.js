@@ -15,7 +15,7 @@ const s3Client = new S3Client({
     },
 });
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middleware to parse JSON requests
 app.use(express.json());
