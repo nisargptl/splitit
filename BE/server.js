@@ -60,7 +60,7 @@ app.post('/api/user', async (req, res) => {
         const newUser = new User({
             name,
             email,
-            friends: []
+            amount_owed: 0
         });
 
         // Save the user to the database
@@ -68,6 +68,21 @@ app.post('/api/user', async (req, res) => {
         res.status(201).json({ message: 'User created successfully', user: data });
     } catch (error) {
         console.log(error)
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/userList/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const users = await User.find({}, { name: 1 });
+        if (!users) {
+            return res.status(404).json({ message: 'Users not found' });
+        }
+        const filteredUsers = users.filter(user => user._id != userId);
+        console.log(filteredUsers);
+        res.status(200).json(filteredUsers);
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
@@ -138,7 +153,7 @@ app.post('/api/group', async (req, res) => {
 app.get('/api/userGroups/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
-        const groups = await Group.find({ "members.user_id": userId }, { name : 1 });
+        const groups = await Group.find({ "members.user_id": userId });
         if (!groups || groups.length === 0) {
             return res.status(404).json({ message: 'Groups not found' });
         }
@@ -196,7 +211,7 @@ app.post('/api/transaction/:groupId', async (req, res) => {
 
         // Create new transaction
         const newTransaction = new Object({
-            txn_id,
+            txn_id: new mongoose.Types.ObjectId().toString(),
             txn_name,
             payer_id,
             name,
