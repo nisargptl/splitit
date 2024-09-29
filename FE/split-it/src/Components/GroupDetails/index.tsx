@@ -5,12 +5,18 @@ import ExpenseModal from "./ExpenseModal";
 import UploadBillModal from "./UploadBillModal";
 import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "react-bootstrap/Spinner";
-import AppNavbar from "../AppNavbar";
 
-const GroupDetails: React.FC = () => {
+interface GroupDetails {
+    setIsLoggedIn: (val: boolean) => void;
+    isLoggedIn: boolean;
+}
+
+const GroupDetails: React.FC<GroupDetails> = ({
+    setIsLoggedIn,
+    isLoggedIn,
+}) => {
     const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
     const [showUploadBillModal, setShowUploadBillModal] = useState(false);
-    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
     const { getAccessTokenSilently, isLoading } = useAuth0();
 
@@ -19,7 +25,7 @@ const GroupDetails: React.FC = () => {
         if (!isLoading) {
             getAccessTokenSilently().then((token) => {
                 localStorage.setItem("token", token);
-                setIsUserLoggedIn(true);
+                setIsLoggedIn(true);
             });
         }
     }, [isLoading]);
@@ -48,9 +54,8 @@ const GroupDetails: React.FC = () => {
         }
     };
 
-    return isUserLoggedIn ? (
+    return isLoggedIn ? (
         <>
-            <AppNavbar />
             <div className="app-container">
                 <header>
                     <h1>Group Expenses</h1>

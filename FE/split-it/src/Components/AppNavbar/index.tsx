@@ -2,7 +2,11 @@ import React from "react";
 import { Navbar, Container, Button } from "react-bootstrap";
 import { useAuth0 } from "@auth0/auth0-react"; // Optional: Auth0 for logout functionality
 
-const AppNavbar: React.FC = () => {
+interface AppNavbarProps {
+    isLoggedIn: boolean;
+}
+
+const AppNavbar: React.FC<AppNavbarProps> = ({ isLoggedIn }) => {
     const { logout } = useAuth0(); // Optional: use this if using Auth0 for authentication
 
     const handleLogout = () => {
@@ -18,12 +22,13 @@ const AppNavbar: React.FC = () => {
                 {/* App Name on the left */}
                 <Navbar.Brand href="/">Split-It</Navbar.Brand>
 
-                {/* Logout Button on the right */}
-                <Navbar.Collapse className="justify-content-end">
-                    <Button variant="outline-light" onClick={handleLogout}>
-                        Logout
-                    </Button>
-                </Navbar.Collapse>
+                {isLoggedIn && (
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-light" onClick={handleLogout}>
+                            Logout
+                        </Button>
+                    </Navbar.Collapse>
+                )}
             </Container>
         </Navbar>
     );
