@@ -16,6 +16,7 @@ const Dashboard: React.FC<DashboardProps> = ({ setIsLoggedIn, isLoggedIn }) => {
                 groupDetails={groupDetails}
                 setIsLoggedIn={setIsLoggedIn}
                 isLoggedIn={isLoggedIn}
+                setGroupDetails={setGroupDetails}
             />
         </div>
     );

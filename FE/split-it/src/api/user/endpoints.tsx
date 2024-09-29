@@ -11,11 +11,9 @@ export const uploadUser = async () => {
     }
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (userId: any) => {
     try {
-        const res = await apiClient.get(
-            "/api/userList/" + localStorage.getItem("user_id")
-        );
+        const res = await apiClient.get("/api/userList/" + userId);
         return res.data;
     } catch (err) {
         console.error(err);
@@ -23,7 +21,7 @@ export const getAllUsers = async () => {
     }
 };
 
-export const getUserAmount = async (userId: string) => {
+export const getUserAmount = async (userId: string | null) => {
     try {
         const res = await apiClient.get("/api/userAmount/" + userId);
         return res.data.amount_owed;

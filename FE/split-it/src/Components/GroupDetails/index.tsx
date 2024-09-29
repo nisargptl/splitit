@@ -16,6 +16,7 @@ interface GroupDetailsProps {
     setIsLoggedIn: (val: boolean) => void;
     isLoggedIn: boolean;
     groupDetails: any;
+    setGroupDetails: (val: any) => void;
 }
 
 const GroupDetails: React.FC<GroupDetailsProps> = ({
@@ -32,8 +33,6 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
     const { getAccessTokenSilently, isLoading } = useAuth0();
     const [userAmount, setUserAmount] = useState(0);
 
-    console.log(groupDetails)
-
     useEffect(() => {
         const fetchData = async () => {
             if (!isLoading) {
@@ -48,6 +47,10 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                 setUserAmount(amt);
             } else if (localStorage.getItem("user_id")) {
                 setUserId(localStorage.getItem("user_id"));
+                const amt = await getUserAmount(
+                    localStorage.getItem("user_id")
+                );
+                setUserAmount(amt);
             }
         };
 
@@ -56,36 +59,39 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
 
     useEffect(() => {
         let obj: any = {
-            txn_name: 'bill',
+            txn_name: "bill",
             payees: {},
             payer_id: userId,
-            name: localStorage.getItem('user_name'),
+            name: localStorage.getItem("user_name"),
             amount: billDetails?.total,
-            date: new Date().toLocaleDateString()
-        }
+            date: new Date().toLocaleDateString(),
+        };
         let totalMems = 0;
-        let items: any = billDetails?.items || []
+        let items: any = billDetails?.items || [];
         if (!groupDetails?.members || items.length) {
-            return
+            return;
         }
 
         groupDetails.members.forEach((member: any) => {
             obj.payees[member.name] = {
                 user_id: member.user_id,
-                amount: 0
+                amount: 0,
             };
             totalMems += 1;
-        })
-
-        Object.keys(items).forEach(item => {
-            Object.keys(obj.payees).forEach((member: any) => {
-                obj.payees[member].amount += billDetails.items[item] / totalMems;
-            })
         });
-        obj.payees = Object.values(obj.payees)
 
-        apiClient.post(`/api/transaction/${groupDetails._id}`, obj)
-    }, [billDetails])
+        Object.keys(items).forEach((item) => {
+            Object.keys(obj.payees).forEach((member: any) => {
+                obj.payees[member].amount +=
+                    billDetails.items[item] / totalMems;
+            });
+        });
+        obj.payees = Object.values(obj.payees);
+
+        apiClient
+            .post(`/api/transaction/${groupDetails._id}`, obj)
+            .then((data) => {});
+    }, [billDetails]);
 
     const handleAddExpense = () => {
         if (!showAddExpenseModal) {
@@ -117,7 +123,9 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                 {Object.keys(groupDetails).length ? (
                     <>
                         <header>
-                            <h2 className="actor-regular">{groupDetails.name}</h2>
+                            <h2 className="actor-regular">
+                                {groupDetails.name}
+                            </h2>
                             <div className="button-container">
                                 <button
                                     className="btn btn-info add-expense-btn"
@@ -137,10 +145,11 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                                 />
                                 <UploadBillModal
                                     show={showUploadBillModal}
-                                    setShowBillDetailModal={setShowBillDetailModal}
+                                    setShowBillDetailModal={
+                                        setShowBillDetailModal
+                                    }
                                     handleClose={handleCloseUploadBill}
                                     setBillDetails={setBillDetails}
-
                                 />
                                 <ItemTableModal
                                     showModal={showBillDetailModal}
@@ -160,9 +169,17 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                 ) : (
                     <>
                         <header>
-                            <h1 className="actor-regular">Your account summary</h1>
+                            <h1 className="actor-regular">
+                                Your account summary
+                            </h1>
                         </header>
-                        <p style={{ display: "flex", fontSize: '24px', margin: 0}}>
+                        <p
+                            style={{
+                                display: "flex",
+                                fontSize: "24px",
+                                margin: 0,
+                            }}
+                        >
                             {userAmount > 0 ? "You owe: " : "You are owed: "}
                             <p
                                 style={{
@@ -173,7 +190,9 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                                 $ {Math.abs(userAmount).toString()}
                             </p>
                         </p>
-                        <p style={{fontSize: 12}}>Click on group for more details</p>
+                        <p style={{ fontSize: 12 }}>
+                            Click on group for more details
+                        </p>
                     </>
                 )}
             </div>
