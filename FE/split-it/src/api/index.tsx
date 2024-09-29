@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const backendUrl = 'http://localhost:8000';
+export const backendUrl = 'http://localhost:3001';
 console.log(backendUrl)
 
 const apiClient = axios.create({

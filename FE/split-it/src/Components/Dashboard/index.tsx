@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Group from "../Group";
 import GroupDetails from "../GroupDetails";
 
@@ -8,10 +8,12 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ setIsLoggedIn, isLoggedIn }) => {
+    const [groupDetails, setGroupDetails] = useState({});
     return (
         <div style={{ display: "flex" }}>
-            <Group />
+            <Group setGroupDetails={setGroupDetails} />
             <GroupDetails
+                groupDetails={groupDetails}
                 setIsLoggedIn={setIsLoggedIn}
                 isLoggedIn={isLoggedIn}
             />
