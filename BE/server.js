@@ -52,7 +52,7 @@ app.post('/api/user', async (req, res) => {
         const newUser = new User({
             name,
             email,
-            friends: []
+            amount_owed: 0
         });
 
         // Save the user to the database
@@ -64,13 +64,16 @@ app.post('/api/user', async (req, res) => {
     }
 });
 
-app.get('/api/userList', async (req, res) => {
+app.get('/api/userList/:id', async (req, res) => {
     try {
+        const userId = req.params.id;
         const users = await User.find({}, { name: 1 });
         if (!users) {
             return res.status(404).json({ message: 'Users not found' });
         }
-        res.status(200).json(users);
+        const filteredUsers = users.filter(user => user._id != userId);
+        console.log(filteredUsers);
+        res.status(200).json(filteredUsers);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
