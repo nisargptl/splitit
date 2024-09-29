@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
 const mongoose = require('mongoose');
 const User = require('./Models/userModel');
 const Group = require('./Models/groupModel');
@@ -9,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON requests
 app.use(express.json());
+app.use(cors())
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL)
@@ -17,18 +20,37 @@ mongoose.connect(process.env.MONGODB_URL)
 
 app.post('/api/user', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        console.log('new user request')
+        const authHeader = req.headers.authorization;
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'No token provided' });
         }
 
-        // Create new user
+        const token = authHeader.split(' ')[1]; // Extract token from "Bearer {ACCESS_TOKEN}"
+        
+        // Make a GET request to another service using the token
+        const userInfoUrl = `https://dev-2kxnqmzpaoclydf0.us.auth0.com/userinfo`;
+        const userInfoResponse = await axios.get(userInfoUrl, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        
+        email = userInfoResponse.data.email
+        name = userInfoResponse.data.name
+        const existingUser = await User.findOne({ email });
+        
+        if (existingUser) {
+            existingUser.name = name;
+            await existingUser.save();
+            return res.status(200).json({ message: 'User name updated successfully', user: existingUser });
+        }
+
+        // // Create new user
         const newUser = new User({
             name,
             email,
-            password,
             friends: []
         });
 
@@ -36,6 +58,7 @@ app.post('/api/user', async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: 'User created successfully', user: newUser });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ error: error.message });
     }
 });
