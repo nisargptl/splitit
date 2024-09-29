@@ -1,0 +1,23 @@
+.expense-table {
+    border-top: 1px solid #ccc;
+}
+
+.expense-item {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.expense-date,
+.expense-title,
+.expense-paid,
+.expense-lent,
+.expense-received {
+    padding: 5px;
+}
+
+.expense-received {
+    color: green;
+}
