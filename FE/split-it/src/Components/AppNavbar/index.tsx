@@ -18,7 +18,7 @@ const AppNavbar: React.FC<AppNavbarProps> = ({ isLoggedIn }) => {
 
     return (
         <Navbar bg="dark" variant="dark">
-            <Container>
+            <Container style={{width: '100%', margin: 0, maxWidth: '100%', padding: "5px 20px"}}>
                 {/* App Name on the left */}
                 <Navbar.Brand href="/">Split-It</Navbar.Brand>
 
