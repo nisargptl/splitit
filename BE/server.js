@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./Models/userModel');
 require("dotenv").config();
@@ -8,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON requests
 app.use(express.json());
+app.use(cors());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL)
@@ -81,6 +83,19 @@ app.delete('/api/user/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.post('/api/group', async (req, res) => {
+    try {
+        console.log(req.body)
+        const emails = req.body.emails;
+        const existingUsers = await User.find({email: {$in: emails}}).toArray();
+        const missingUsers = emails.filter(email => !existingUsers.includes(email));
+        
+        res.status(200).send();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+})
 
 // Start the server
 app.listen(PORT, () => {
