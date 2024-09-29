@@ -9,6 +9,9 @@ import { getUserAmount, uploadUser } from "../../api/user/endpoints";
 // @ts-ignore
 import { UserContext } from "../../utils/userContext.js";
 import { formatGroupDetails } from "../../utils";
+import ItemTableModal from "./ItemTableModal";
+import apiClient from "../../api";
+
 interface GroupDetailsProps {
     setIsLoggedIn: (val: boolean) => void;
     isLoggedIn: boolean;
@@ -22,10 +25,14 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
 }) => {
     const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
     const [showUploadBillModal, setShowUploadBillModal] = useState(false);
+    const [showBillDetailModal, setShowBillDetailModal] = useState(false);
+    const [billDetails, setBillDetails] = useState<any>([]);
     const userContext: any = useContext(UserContext);
-    const { setUserId } = userContext;
+    const { userId, setUserId } = userContext;
     const { getAccessTokenSilently, isLoading } = useAuth0();
     const [userAmount, setUserAmount] = useState(0);
+
+    console.log(groupDetails)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,6 +53,39 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
 
         fetchData();
     }, [isLoading]);
+
+    useEffect(() => {
+        let obj: any = {
+            txn_name: 'bill',
+            payees: {},
+            payer_id: userId,
+            name: localStorage.getItem('user_name'),
+            amount: billDetails?.total,
+            date: new Date().toLocaleDateString()
+        }
+        let totalMems = 0;
+        let items: any = billDetails?.items || []
+        if (!groupDetails?.members || items.length) {
+            return
+        }
+
+        groupDetails.members.forEach((member: any) => {
+            obj.payees[member.name] = {
+                user_id: member.user_id,
+                amount: 0
+            };
+            totalMems += 1;
+        })
+
+        Object.keys(items).forEach(item => {
+            Object.keys(obj.payees).forEach((member: any) => {
+                obj.payees[member].amount += billDetails.items[item] / totalMems;
+            })
+        });
+        obj.payees = Object.values(obj.payees)
+
+        apiClient.post(`/api/transaction/${groupDetails._id}`, obj)
+    }, [billDetails])
 
     const handleAddExpense = () => {
         if (!showAddExpenseModal) {
@@ -97,7 +137,16 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                                 />
                                 <UploadBillModal
                                     show={showUploadBillModal}
+                                    setShowBillDetailModal={setShowBillDetailModal}
                                     handleClose={handleCloseUploadBill}
+                                    setBillDetails={setBillDetails}
+
+                                />
+                                <ItemTableModal
+                                    showModal={showBillDetailModal}
+                                    setShowModal={setShowBillDetailModal}
+                                    billDetails={billDetails}
+                                    members={groupDetails.members}
                                 />
                             </div>
                         </header>

@@ -6,12 +6,16 @@ import api from '../../utils/axios.ts';
 interface UploadBillModalProps {
     show: boolean;
     handleClose: () => void;
+    setBillDetails: React.Dispatch<React.SetStateAction<never[]>>;
+    setShowBillDetailModal: any,
     //   handleUpload: (file: File | null) => void;
 }
 
 const UploadBillModal: React.FC<UploadBillModalProps> = ({
     show,
+    setShowBillDetailModal,
     handleClose,
+    setBillDetails
 }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -39,9 +43,13 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({
 
         setUploading(true)
         try {
+            const timestamp = Date.now();
+            const fileExtension = selectedFile.name.split('.').pop();
+            const baseFilename = selectedFile.name.replace(`.${fileExtension}`, '');
+            const fileName = `${baseFilename}-${timestamp}.${fileExtension}`;
             const response = await api.get('/generate-presigned-url', {
               params: {
-                fileName: selectedFile.name,
+                fileName: fileName,
                 fileType: selectedFile.type,
               },
             });
@@ -52,9 +60,13 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({
                 'Content-Type': selectedFile.type,
               },
             });
-      
-            alert('File uploaded successfully!');
+            console.log(fileName)
+            const parsedBillData: any = await api.post(`https://x38bl41jt4.execute-api.us-west-2.amazonaws.com/dev/ocr-process?bucket=${process.env.REACT_APP_BUCKET_NAME}&key=${fileName}`)
+            console.log(parsedBillData);
+            setBillDetails(parsedBillData.data);
+            // alert('File uploaded successfully!');
             handleModalHide();
+            setShowBillDetailModal(true);
           } catch (error) {
             console.error('Error uploading file:', error);
           } finally {

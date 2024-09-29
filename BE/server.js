@@ -335,7 +335,7 @@ app.get('/generate-presigned-url', async (req, res) => {
 
     const command = new PutObjectCommand({
         Bucket: process.env.BUCKET_NAME,
-        Key: `uploads/${fileName}`,
+        Key: `${fileName}`,
         ContentType: fileType,
     });
 
