@@ -8,7 +8,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { getUserAmount, uploadUser } from "../../api/user/endpoints";
 // @ts-ignore
 import { UserContext } from "../../utils/userContext.js";
-import { formatGroupDetails } from "../../utils";
+import { convertDateToDesiredFormat, formatGroupDetails } from "../../utils";
 import ItemTableModal from "./ItemTableModal";
 import apiClient from "../../api";
 
@@ -59,7 +59,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
 
     useEffect(() => {
         let obj: any = {
-            txn_name: "bill",
+            txn_name: `bill-${convertDateToDesiredFormat(new Date().toLocaleDateString())}`,
             payees: {},
             payer_id: userId,
             name: localStorage.getItem("user_name"),
@@ -75,7 +75,8 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
         groupDetails.members.forEach((member: any) => {
             obj.payees[member.name] = {
                 user_id: member.user_id,
-                amount: 0,
+                user_name: member.name,
+                amount: 0
             };
             totalMems += 1;
         });
@@ -142,6 +143,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                                 <ExpenseModal
                                     show={showAddExpenseModal}
                                     handleClose={handleCloseExpense}
+                                    groupDetails={groupDetails}
                                 />
                                 <UploadBillModal
                                     show={showUploadBillModal}

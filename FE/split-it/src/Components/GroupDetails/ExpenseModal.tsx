@@ -1,24 +1,45 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, InputGroup } from "react-bootstrap";
+import apiClient from "../../api";
 
 interface ExpenseModalProps {
     show: boolean;
     handleClose: () => void;
+    groupDetails: any;
     // handleSave: (expenseData: { description: string; amount: number; date: string }) => void;
 }
 
-const ExpenseModal: React.FC<ExpenseModalProps> = ({ show, handleClose }) => {
+const ExpenseModal: React.FC<ExpenseModalProps> = ({ show, handleClose, groupDetails }) => {
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState<number>(0);
     const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
     const handleSubmit = () => {
-        const expenseData = {
-            description,
-            amount,
-            date,
-        };
-        // handleSave(expenseData);
+        let obj: any = {
+            txn_name: description,
+            payees: {},
+            payer_id: localStorage.getItem('user_id'),
+            name: localStorage.getItem('user_name'),
+            amount: amount,
+            date: date
+        }
+        let totalMems = groupDetails.members.length;
+        if (!groupDetails.members.length) {
+            return
+        }
+
+        groupDetails.members.forEach((member: any) => {
+            obj.payees[member.name] = {
+                user_id: member.user_id,
+                user_name: member.name,
+                amount: amount / totalMems
+            };
+        })
+
+        obj.payees = Object.values(obj.payees)
+
+        apiClient.post(`/api/transaction/${groupDetails._id}`, obj)
+
         handleClose();
     };
 
@@ -29,15 +50,6 @@ const ExpenseModal: React.FC<ExpenseModalProps> = ({ show, handleClose }) => {
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    {/* Select users and split */}
-                    <Form.Group className="mb-3">
-                        <Form.Label>With you and:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value="All of ChatGPT"
-                            readOnly
-                        />
-                    </Form.Group>
 
                     {/* Description */}
                     <Form.Group className="mb-3">
@@ -74,7 +86,7 @@ const ExpenseModal: React.FC<ExpenseModalProps> = ({ show, handleClose }) => {
                             Paid by <strong>you</strong> and split{" "}
                             <strong>equally</strong>.
                         </Form.Label>
-                        <Form.Text>($0.00/person)</Form.Text>
+                        <Form.Text>({'$' + `${amount / groupDetails.members.length}/person`})</Form.Text>
                     </Form.Group>
 
                     {/* Date */}

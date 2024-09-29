@@ -1,4 +1,4 @@
-const convertDateToDesiredFormat = (dateString: string): string => {
+export const convertDateToDesiredFormat = (dateString: string): string => {
     const date = new Date(dateString);
 
     return date.toLocaleDateString("en-US", {
