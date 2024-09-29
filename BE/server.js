@@ -130,7 +130,7 @@ app.post('/api/group', async (req, res) => {
 app.get('/api/userGroups/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
-        const groups = await Group.find({ "members.user_id": userId }, { name : 1 });
+        const groups = await Group.find({ "members.user_id": userId });
         if (!groups || groups.length === 0) {
             return res.status(404).json({ message: 'Groups not found' });
         }
@@ -188,7 +188,7 @@ app.post('/api/transaction/:groupId', async (req, res) => {
 
         // Create new transaction
         const newTransaction = new Object({
-            txn_id,
+            txn_id: new mongoose.Types.ObjectId().toString(),
             txn_name,
             payer_id,
             name,
