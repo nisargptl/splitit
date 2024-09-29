@@ -117,16 +117,16 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                 {Object.keys(groupDetails).length ? (
                     <>
                         <header>
-                            <h1>Group Expenses</h1>
+                            <h2 className="actor-regular">{groupDetails.name}</h2>
                             <div className="button-container">
                                 <button
-                                    className="add-expense-btn"
+                                    className="btn btn-info add-expense-btn"
                                     onClick={handleAddExpense}
                                 >
                                     Add an expense
                                 </button>
                                 <button
-                                    className="upload-bill-btn"
+                                    className="btn btn-info upload-bill-btn"
                                     onClick={handleUploadBill}
                                 >
                                     Upload Bill
@@ -160,7 +160,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
                 ) : (
                     <>
                         <header>
-                            <h1>Your account summary</h1>
+                            <h1 className="actor-regular">Your account summary</h1>
                         </header>
                         <p style={{ display: "flex", fontSize: '24px', margin: 0}}>
                             {userAmount > 0 ? "You owe: " : "You are owed: "}

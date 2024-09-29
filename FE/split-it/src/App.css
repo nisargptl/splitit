@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+
+.kiwi-maru-light {
+  font-family: "Kiwi Maru", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.kiwi-maru-regular {
+  font-family: "Kiwi Maru", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.kiwi-maru-medium {
+  font-family: "Kiwi Maru", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.actor-regular {
+  font-family: "Actor", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}

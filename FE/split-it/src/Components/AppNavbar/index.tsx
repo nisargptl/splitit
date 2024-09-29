@@ -19,13 +19,53 @@ const AppNavbar: React.FC<AppNavbarProps> = ({ isLoggedIn }) => {
 
     return (
         <Navbar bg="dark" variant="dark">
-            <Container style={{width: '100%', margin: 0, maxWidth: '100%', padding: "5px 20px"}}>
+            <Container
+                style={{
+                    width: "100%",
+                    margin: 0,
+                    maxWidth: "100%",
+                    padding: "5px 20px",
+                }}
+            >
                 {/* App Name on the left */}
-                <Navbar.Brand href="/">Split-It</Navbar.Brand>
+                <img
+                    src="/logo.svg" // Assuming the logo is in the public directory
+                    alt="Logo"
+                    width="45"
+                    height="45"
+                    style={{marginTop: 5}}
+                    className="d-inline-block align-top"
+                />
+                <Navbar.Brand
+                    href="/"
+                    className="kiwi-maru-regular"
+                    style={{ fontSize: 34, marginLeft: -12, marginRight: 0 }}
+                >
+                    mart
+                </Navbar.Brand>
+                <img
+                    src="/logo.svg" // Assuming the logo is in the public directory
+                    alt="Logo"
+                    width="45"
+                    height="45"
+                    style={{marginTop: 5}}
+                    className="d-inline-block align-top"
+                />
+                <Navbar.Brand
+                    href="/"
+                    className="kiwi-maru-regular"
+                    style={{ fontSize: 34, marginLeft: -12 }}
+                >
+                    plit
+                </Navbar.Brand>
 
                 {isLoggedIn && (
                     <Navbar.Collapse className="justify-content-end">
-                        <Button variant="outline-light" onClick={handleLogout}>
+                        <Button
+                            variant="outline-light"
+                            style={{ border: "none" }}
+                            onClick={handleLogout}
+                        >
                             Logout
                         </Button>
                     </Navbar.Collapse>
