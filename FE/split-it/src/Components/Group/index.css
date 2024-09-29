@@ -3,74 +3,86 @@
     padding: 20px;
     background-color: #f8f9fa;
     border-right: 1px solid #ddd;
-    height: 100vh;
-  }
-  
-  .recent-activity {
+    overflow: scroll;
+}
+
+.sidebar {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+.sidebar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+.recent-activity {
     margin-bottom: 20px;
-  }
-  
-  .recent-activity h3 {
+}
+
+.recent-activity h3 {
     color: #ff6f61;
     margin-bottom: 10px;
-  }
-  
-  .recent-activity input {
+}
+
+.recent-activity input {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-  }
-  
-  .expenses-button {
+}
+
+.expenses-button {
     width: 100%;
     padding: 10px;
     background-color: #f1f1f1;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .groups-section h4, .friends-section h4, .invite-friends h4 {
+}
+
+.groups-section h4,
+.friends-section h4,
+.invite-friends h4 {
     margin-top: 20px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: bold;
-  }
-  
-  .groups-section ul, .friends-section ul {
+}
+
+.groups-section ul,
+.friends-section ul {
     list-style: none;
     padding: 0;
-  }
-  
-  .groups-section li, .friends-section li {
+}
+
+.groups-section li,
+.friends-section li {
     padding: 8px 0;
     font-size: 14px;
-  }
-  
-  .group-icon {
+}
+
+.group-icon {
     margin-right: 8px;
-  }
-  
-  .add-group-button {
+}
+
+.add-group-button {
     padding: 5px 10px;
     background-color: #e0e0e0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-  }
-  
-  .invite-friends input {
+}
+
+.invite-friends input {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-  }
-  
-  .invite-button {
+}
+
+.invite-button {
     width: 100%;
     padding: 8px;
     background-color: #28a745;
@@ -78,9 +90,8 @@
     color: white;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .invite-button:hover {
+}
+
+.invite-button:hover {
     background-color: #218838;
-  }
-  
+}

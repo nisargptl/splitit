@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import './index.css'
-import { Button, Modal, Form } from 'react-bootstrap';
-import { FaPlus } from 'react-icons/fa';
+import "./index.css";
+import { Button, Modal, Form } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa";
 // @ts-ignore
-import api from '../../utils/axios.ts';
+import api from "../../utils/axios.ts";
 
 const Group = () => {
     const [groups, setGroups] = useState([
@@ -11,18 +11,18 @@ const Group = () => {
         { id: 2, name: "Group2" },
         { id: 3, name: "Group3" },
         { id: 4, name: "Group4" },
-        { id: 5, name: "Group5" }
+        { id: 5, name: "Group5" },
     ]);
     const [friends, setFriends] = useState([
         { id: 1, name: "Friend1" },
         { id: 2, name: "Friend2" },
         { id: 3, name: "Friend3" },
         { id: 4, name: "Friend4" },
-        { id: 5, name: "Friend5" }
+        { id: 5, name: "Friend5" },
     ]);
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
-    const [newGroupName, setNewGroupName] = useState('');
-    const [friendEmails, setFriendEmails] = useState(['']); // Start with one email input
+    const [newGroupName, setNewGroupName] = useState("");
+    const [friendEmails, setFriendEmails] = useState([""]); // Start with one email input
 
     // Handlers for the modal
     const handleClose = () => setShowCreateGroupModal(false);
@@ -49,17 +49,17 @@ const Group = () => {
     };
 
     const handleAddEmailField = () => {
-        setFriendEmails([...friendEmails, '']);
+        setFriendEmails([...friendEmails, ""]);
     };
 
     const handleCreateGroup = async () => {
-        if (newGroupName.trim() !== '') {
-            const newGroup: any = await api.post('/api/group', {
+        if (newGroupName.trim() !== "") {
+            const newGroup: any = await api.post("/api/group", {
                 groupName: newGroupName,
-                emails: friendEmails
-            })
+                emails: friendEmails,
+            });
             setGroups([...groups, newGroup]);
-            setNewGroupName('');
+            setNewGroupName("");
             handleClose();
         }
     };
@@ -77,16 +77,28 @@ const Group = () => {
             <div className="groups-section">
                 <h4 className="fs-3">GROUPS</h4>
                 <ul>
-                    {groups.map((group: any) => (<li key={group.id} role="button"><span className="group-icon fs-5">🏷️{group.name}</span></li>))}
+                    {groups.map((group: any) => (
+                        <li key={group.id} role="button">
+                            <span className="group-icon fs-5">
+                                🏷️{group.name}
+                            </span>
+                        </li>
+                    ))}
                 </ul>
-                <button className="add-group-button" onClick={handleShow}>+ add</button>
+                <button className="add-group-button" onClick={handleShow}>
+                    + add
+                </button>
             </div>
 
             {/* Friends Section */}
             <div className="friends-section">
                 <h4 className="fs-3">FRIENDS</h4>
                 <ul>
-                    {friends.map((friend: any) => (<li key={friend.id} className="fs-5" role="button">{friend.name}</li>))}
+                    {friends.map((friend: any) => (
+                        <li key={friend.id} className="fs-5" role="button">
+                            {friend.name}
+                        </li>
+                    ))}
                 </ul>
             </div>
 
@@ -105,7 +117,10 @@ const Group = () => {
                 <Modal.Body>
                     <Form>
                         {/* Group Name */}
-                        <Form.Group controlId="formGroupName">
+                        <Form.Group
+                            controlId="formGroupName"
+                            style={{ padding: 10 }}
+                        >
                             <Form.Label>Group Name</Form.Label>
                             <Form.Control
                                 type="text"
@@ -116,19 +131,30 @@ const Group = () => {
                         </Form.Group>
 
                         {/* Input Emails of Friends */}
-                        <Form.Group controlId="formFriendEmails">
+                        <Form.Group
+                            controlId="formFriendEmails"
+                            style={{ padding: 10 }}
+                        >
                             <Form.Label>Enter Friend's Email</Form.Label>
                             {friendEmails.map((email, index) => (
-                                <div key={index} className="d-flex align-items-center mb-2">
+                                <div
+                                    key={index}
+                                    className="d-flex align-items-center mb-2"
+                                >
                                     <Form.Control
                                         type="email"
                                         placeholder="Enter friend's email"
                                         value={email}
-                                        onChange={(e) => handleEmailChange(index, e)}
+                                        onChange={(e) =>
+                                            handleEmailChange(index, e)
+                                        }
                                     />
                                     {/* Add a plus icon to add more emails */}
                                     {index === friendEmails.length - 1 && (
-                                        <Button variant="link" onClick={handleAddEmailField}>
+                                        <Button
+                                            variant="link"
+                                            onClick={handleAddEmailField}
+                                        >
                                             <FaPlus />
                                         </Button>
                                     )}
@@ -148,6 +174,6 @@ const Group = () => {
             </Modal>
         </div>
     );
-}
+};
 
-export default Group
+export default Group;

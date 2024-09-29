@@ -6,12 +6,12 @@ import UploadBillModal from "./UploadBillModal";
 import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "react-bootstrap/Spinner";
 
-interface GroupDetails {
+interface GroupDetailsProps {
     setIsLoggedIn: (val: boolean) => void;
     isLoggedIn: boolean;
 }
 
-const GroupDetails: React.FC<GroupDetails> = ({
+const GroupDetails: React.FC<GroupDetailsProps> = ({
     setIsLoggedIn,
     isLoggedIn,
 }) => {
