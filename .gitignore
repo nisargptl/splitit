@@ -1,2 +1,4 @@
 venv/
+BE/node_modules
+Be/package-lock.json
 .env
