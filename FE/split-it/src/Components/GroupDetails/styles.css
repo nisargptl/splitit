@@ -15,9 +15,9 @@ button.add-expense-btn,
 button.upload-bill-btn {
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #ff7f50;
+    /* background-color: #ff7f50; */
     border: none;
-    color: white;
+    color: black;
     cursor: pointer;
     border-radius: 5px;
 }

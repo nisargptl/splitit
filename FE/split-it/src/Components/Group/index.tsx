@@ -37,7 +37,12 @@ const Group: React.FC<GroupProps> = ({ setGroupDetails }) => {
             <div className="recent-activity">
                 {/* <h3 className="fs-3">Recent Activity</h3>
                 <input type="text" placeholder="Filter by name" /> */}
-                <button className="expenses-button" onClick={() => setGroupDetails({})}>Dashboard</button>
+                <button
+                    className="expenses-button"
+                    onClick={() => setGroupDetails({})}
+                >
+                    Dashboard
+                </button>
             </div>
 
             {/* Groups Section */}
@@ -50,23 +55,27 @@ const Group: React.FC<GroupProps> = ({ setGroupDetails }) => {
                                 className="group-menu-button"
                                 onClick={() => handleGroupClick(group)}
                             >
-                                <span className="group-icon fs-5">
-                                    🏷️ {group.name}
+                                <span className="group-icon fs-6">
+                                    <img
+                                        src="/user-group.svg" // Assuming the logo is in the public directory
+                                        alt="group"
+                                        width="14"
+                                        height="14"
+                                        style={{ marginTop: 5 }}
+                                        className="d-inline-block align-top"
+                                    />{" "}
+                                    {group.name}
                                 </span>
                             </button>
                         </li>
                     ))}
                 </ul>
-                <button className="add-group-button" onClick={handleShow}>
-                    + add
+                <button
+                    className="add-group-button btn btn-info"
+                    onClick={handleShow}
+                >
+                    Create New Group
                 </button>
-            </div>
-
-            {/* Invite Friends */}
-            <div className="invite-friends">
-                <h4 className="fs-3">Invite Friends</h4>
-                <input type="email" placeholder="Enter an email address" />
-                <button className="invite-button">Send invite</button>
             </div>
 
             <CreateGroupModal
