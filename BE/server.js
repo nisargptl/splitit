@@ -130,7 +130,7 @@ app.post('/api/group', async (req, res) => {
 app.get('/api/userGroups/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
-        const groups = await Group.find({ "members.user_id": userId });
+        const groups = await Group.find({ "members.user_id": userId }, { name : 1 });
         if (!groups || groups.length === 0) {
             return res.status(404).json({ message: 'Groups not found' });
         }
