@@ -80,7 +80,6 @@ app.get('/api/userList/:id', async (req, res) => {
             return res.status(404).json({ message: 'Users not found' });
         }
         const filteredUsers = users.filter(user => user._id != userId);
-        console.log(filteredUsers);
         res.status(200).json(filteredUsers);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -203,7 +202,7 @@ app.delete('/api/group/:id', async (req, res) => {
 app.post('/api/transaction/:groupId', async (req, res) => {
     try {
         const groupId = req.params.groupId;
-        const { txn_id, txn_name, payer_id, name, payees, amount, is_recurring } = req.body;
+        const { txn_name, payer_id, name, payees, amount, is_recurring } = req.body;
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ message: 'Group not found' });
@@ -223,6 +222,30 @@ app.post('/api/transaction/:groupId', async (req, res) => {
 
         // Append the transaction to the database
         group.transactions.push(newTransaction);
+
+        // Calculate group amount for members
+        const amountOwed = {};
+        group.members.forEach(member => {
+            amountOwed[member.user_id] = 0;
+        });
+
+        group.transactions.forEach(transaction => {
+            transaction.payees.forEach(payee => {
+                if (payee.user_id === transaction.payer_id) {
+                    amountOwed[payee.user_id] += payee.amount;
+                } else {
+                    amountOwed[payee.user_id] -= payee.amount;
+                }
+            });
+        });
+
+        group.members.forEach(member => {
+            member.amount_owed = amountOwed[member.user_id];
+        });
+
+        group.markModified('members');
+
+        // Save in DB
         await group.save();
         res.status(201).json({ message: 'Transaction added successfully', Transaction: newTransaction });
     } catch (error) {
@@ -321,6 +344,26 @@ app.get('/generate-presigned-url', async (req, res) => {
         res.json({ url });
     } catch (error) {
         res.status(500).json({ error: 'Error generating pre-signed URL' });
+    }
+})
+
+app.get('/api/userAmount/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const groups = await Group.find({ "members.user_id": userId }, { members: 1 });
+        if (!groups) {
+            return res.status(404).json({ amount_owed : 0, message: 'No User group found' });
+        }
+        const amountOwed = groups.reduce((total, group) => {
+            const user = group.members.find(member => member.user_id === userId);
+            if (user) {
+                return total + user.amount_owed;
+            }
+            return total;
+        }, 0);
+        res.status(200).json({ amount_owed : amountOwed });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
