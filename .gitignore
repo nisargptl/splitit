@@ -2,3 +2,6 @@ venv/
 BE/node_modules
 Be/package-lock.json
 .env
+/DS/OCR/package
+/DS/OCR/my_deployment_package.zip
+ocr_lambda.zip
