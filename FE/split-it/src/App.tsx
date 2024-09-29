@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import GroupDetails from "./Components/GroupDetails";
 import "./App.css";
 import {
     Route,
@@ -9,6 +8,7 @@ import {
 } from "react-router-dom";
 import Login from "./Components/Login";
 import AppNavbar from "./Components/AppNavbar";
+import Dashboard from "./Components/Dashboard";
 
 const App: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(
@@ -24,10 +24,7 @@ const App: React.FC = () => {
                 <Route
                     path="/dashboard"
                     element={
-                        <GroupDetails
-                            isLoggedIn
-                            setIsLoggedIn={setIsLoggedIn}
-                        />
+                        <Dashboard isLoggedIn setIsLoggedIn={setIsLoggedIn} />
                     }
                 ></Route>
             </Routes>
