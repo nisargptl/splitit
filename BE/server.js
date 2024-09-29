@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./Models/userModel');
+const Group = require('./Models/groupModel');
 require("dotenv").config();
 
 const app = express();
@@ -41,14 +42,8 @@ app.post('/api/user', async (req, res) => {
 
 app.get('/api/user/:id', async (req, res) => {
     try {
-        console.log("AA:",req.params.id);
         const userId = req.params.id;
         const user = await User.findById(userId);
-
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
-        }
-        console.log("BB:", user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -76,7 +71,70 @@ app.delete('/api/user/:id', async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.status(204).send(); // No Content response
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/group', async (req, res) => {
+    try {
+        const { name, created_by_name, created_by_user_id, members, transactions } = req.body;
+
+        const existingGroup = await Group.findOne({ name });
+        if (existingGroup) {
+            return res.status(400).json({ message: 'Group name already exists' });
+        }
+
+        // Create new group
+        const newGroup = new Group({
+            name,
+            created_by_name,
+            created_by_user_id,
+            members,
+            transactions: transactions || []
+        });
+
+        // Save the group to the database
+        await newGroup.save();
+        res.status(201).json({ message: 'Group created successfully', group: newGroup });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/group/:id', async (req, res) => {
+    try {
+        const groupId = req.params.id;
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        res.status(200).json(group);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/group/:id', async (req, res) => {
+    try {
+        const updatedGroup = await Group.findByIdAndUpdate(req.params.id, req.body);
+        if (!updatedGroup) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        res.status(200).json({ prevData: updatedGroup, updatedData: req.body});
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/group/:id', async (req, res) => {
+    try {
+        const deletedGroup = await Group.findByIdAndDelete(req.params.id);
+        if (!deletedGroup) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
