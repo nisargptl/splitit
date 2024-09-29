@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ExpenseTable from "../ExpenseTable";
 import "./styles.css";
 import ExpenseModal from "./ExpenseModal";
@@ -6,7 +6,8 @@ import UploadBillModal from "./UploadBillModal";
 import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "react-bootstrap/Spinner";
 import { uploadUser } from "../../api/user/endpoints";
-
+// @ts-ignore
+import { UserContext } from '../../utils/userContext.js';
 interface GroupDetailsProps {
 
     setIsLoggedIn: (val: boolean) => void;
@@ -19,19 +20,22 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({
 }) => {
     const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
     const [showUploadBillModal, setShowUploadBillModal] = useState(false);
-
+    const userContext: any = useContext(UserContext);
+    const {setUserId} = userContext;
     const { getAccessTokenSilently, isLoading } = useAuth0();
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log(isLoading);
             if (!isLoading) {
                 const token = await getAccessTokenSilently();
                 localStorage.setItem("token", token);
                 setIsLoggedIn(true);
     
                 // upload user data to db
-                await uploadUser();
+                const data = await uploadUser();
+                setUserId(data.user._id);
+            } else if (localStorage.getItem('userId')) {
+                setUserId(localStorage.getItem('userId'))
             }
         };
     

@@ -1,18 +1,14 @@
-import React, { useState } from "react";
-import "./index.css";
-import { Button, Modal, Form } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
+import React, { useContext, useEffect, useState } from "react";
+import './index.css'
+import { Button, Modal, Form } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa';
 // @ts-ignore
 import api from "../../utils/axios.ts";
+// @ts-ignore
+import { UserContext } from '../../utils/userContext.js';
 
 const Group = () => {
-    const [groups, setGroups] = useState([
-        { id: 1, name: "Group1" },
-        { id: 2, name: "Group2" },
-        { id: 3, name: "Group3" },
-        { id: 4, name: "Group4" },
-        { id: 5, name: "Group5" },
-    ]);
+    const [groups, setGroups] = useState([]);
     const [friends, setFriends] = useState([
         { id: 1, name: "Friend1" },
         { id: 2, name: "Friend2" },
@@ -23,6 +19,20 @@ const Group = () => {
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
     const [newGroupName, setNewGroupName] = useState("");
     const [friendEmails, setFriendEmails] = useState([""]); // Start with one email input
+    const userContext: any = useContext(UserContext);
+    const {userId} = userContext;
+    useEffect(() => {
+        console.log(userId)
+        if (userId) {
+            api.get(`/api/userGroups/${userId}`)
+                .then(res => {
+                    let newGroups: any = res.data;
+                    setGroups(newGroups);
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
+    }, [userId])
 
     // Handlers for the modal
     const handleClose = () => setShowCreateGroupModal(false);
@@ -58,6 +68,7 @@ const Group = () => {
                 groupName: newGroupName,
                 emails: friendEmails,
             });
+            // @ts-ignore
             setGroups([...groups, newGroup]);
             setNewGroupName("");
             handleClose();
@@ -78,7 +89,7 @@ const Group = () => {
                 <h4 className="fs-3">GROUPS</h4>
                 <ul>
                     {groups.map((group: any) => (
-                        <li key={group.id} role="button">
+                        <li id={group._id} key={group._id} role="button">
                             <span className="group-icon fs-5">
                                 🏷️{group.name}
                             </span>

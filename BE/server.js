@@ -4,8 +4,16 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const User = require('./Models/userModel');
 const Group = require('./Models/groupModel');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 require("dotenv").config();
-
+const s3Client = new S3Client({
+    region: process.env.REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+});
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -56,8 +64,8 @@ app.post('/api/user', async (req, res) => {
         });
 
         // Save the user to the database
-        await newUser.save();
-        res.status(201).json({ message: 'User created successfully', user: newUser });
+        const data = await newUser.save();
+        res.status(201).json({ message: 'User created successfully', user: data });
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: error.message });
@@ -282,6 +290,24 @@ app.post('/api/group', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
+
+// Generate a pre-signed URL for S3
+app.get('/generate-presigned-url', async (req, res) => {
+    const { fileName, fileType } = req.query;
+
+    const command = new PutObjectCommand({
+        Bucket: process.env.BUCKET_NAME,
+        Key: `uploads/${fileName}`,
+        ContentType: fileType,
+    });
+
+    try {
+        const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+        res.json({ url });
+    } catch (error) {
+        res.status(500).json({ error: 'Error generating pre-signed URL' });
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {

@@ -11,6 +11,7 @@ const AppNavbar: React.FC<AppNavbarProps> = ({ isLoggedIn }) => {
 
     const handleLogout = () => {
         localStorage.setItem("token", "");
+        localStorage.setItem("userId", "");
         logout({
             logoutParams: { returnTo: window.location.origin + "/login" },
         });

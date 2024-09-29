@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+// @ts-ignore
+import api from '../../utils/axios.ts';
 
 interface UploadBillModalProps {
     show: boolean;
@@ -13,6 +15,7 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({
 }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false)
 
     // This function handles file selection
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,10 +32,34 @@ const UploadBillModal: React.FC<UploadBillModalProps> = ({
         }
     };
 
-    const handleUploadClick = () => {
-        // Pass the selected file to the parent component
-        // handleUpload(selectedFile);
-        handleClose();
+    const handleUploadClick = async () => {
+        if (!selectedFile) {
+            return
+        }
+
+        setUploading(true)
+        try {
+            const response = await api.get('/generate-presigned-url', {
+              params: {
+                fileName: selectedFile.name,
+                fileType: selectedFile.type,
+              },
+            });
+      
+            const { url } = response.data;
+            await api.put(url, selectedFile, {
+              headers: {
+                'Content-Type': selectedFile.type,
+              },
+            });
+      
+            alert('File uploaded successfully!');
+            handleModalHide();
+          } catch (error) {
+            console.error('Error uploading file:', error);
+          } finally {
+            setUploading(false);
+          }
     };
 
     const handleModalHide = () => {
